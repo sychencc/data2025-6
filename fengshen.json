@@ -1,0 +1,255 @@
+{
+  "characters": [
+    {
+      "id": 1,
+      "name": "殷寿",
+      "role": "商纣王",
+      "alias": ["纣王"],
+      "relationships": [
+        {"target": 2, "type": "父子", "description": "与殷郊"},
+        {"target": 3, "type": "夫妻", "description": "与姜王后"},
+        {"target": 9, "type": "质子", "description": "崇应彪为其质子"},
+        {"target": 6, "type": "质子", "description": "鄂顺为其质子"},
+        {"target": 5, "type": "质子", "description": "姜文焕为其质子"},
+        {"target": 11, "type": "质子", "description": "姬发为其质子"},
+        {"target": 19, "type": "质子", "description": "苏全孝为其质子"},
+        {"target": 16, "type": "君臣", "description": "与比干"},
+        {"target": 18, "type": "夫妻", "description": "与苏妲己"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "殷郊",
+      "role": "商太子",
+      "relationships": [
+        {"target": 1, "type": "父子", "description": "与殷寿"},
+        {"target": 3, "type": "母子", "description": "与姜王后"}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "姜王后",
+      "role": "商王后",
+      "relationships": [
+        {"target": 1, "type": "夫妻", "description": "与殷寿"},
+        {"target": 2, "type": "母子", "description": "与殷郊"},
+        {"target": 4, "type": "兄妹", "description": "与姜桓楚"}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "姜桓楚",
+      "role": "东伯侯",
+      "relationships": [
+        {"target": 3, "type": "兄妹", "description": "与姜王后"},
+        {"target": 5, "type": "父子", "description": "与姜文焕"}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "姜文焕",
+      "role": "东伯侯之子/质子",
+      "relationships": [
+        {"target": 1, "type": "质子", "description": "殷寿的质子"},
+        {"target": 4, "type": "父子", "description": "与姜桓楚"}
+      ]
+    },
+    {
+      "id": 6,
+      "name": "鄂顺",
+      "role": "南伯侯之子/质子",
+      "relationships": [
+        {"target": 1, "type": "质子", "description": "殷寿的质子"},
+        {"target": 7, "type": "父子", "description": "与鄂崇禹"}
+      ]
+    },
+    {
+      "id": 7,
+      "name": "鄂崇禹",
+      "role": "南伯侯",
+      "relationships": [
+        {"target": 6, "type": "父子", "description": "与鄂顺"}
+      ]
+    },
+    {
+      "id": 8,
+      "name": "崇侯虎",
+      "role": "北伯侯",
+      "relationships": [
+        {"target": 9, "type": "父子", "description": "与崇应彪"}
+      ]
+    },
+    {
+      "id": 9,
+      "name": "崇应彪",
+      "role": "北伯侯之子/质子",
+      "relationships": [
+        {"target": 1, "type": "质子", "description": "殷寿的质子"},
+        {"target": 8, "type": "父子", "description": "与崇侯虎"}
+      ]
+    },
+    {
+      "id": 10,
+      "name": "姬昌",
+      "role": "西伯侯",
+      "relationships": [
+        {"target": 11, "type": "父子", "description": "与姬发"},
+        {"target": 12, "type": "父子", "description": "与伯邑考"}
+      ]
+    },
+    {
+      "id": 11,
+      "name": "姬发",
+      "role": "周武王/质子",
+      "alias": ["周武王"],
+      "relationships": [
+        {"target": 1, "type": "质子", "description": "殷寿的质子"},
+        {"target": 10, "type": "父子", "description": "与姬昌"},
+        {"target": 12, "type": "兄弟", "description": "与伯邑考"},
+        {"target": 15, "type": "君臣", "description": "与姜子牙"}
+      ]
+    },
+    {
+      "id": 12,
+      "name": "伯邑考",
+      "role": "西伯侯长子",
+      "relationships": [
+        {"target": 10, "type": "父子", "description": "与姬昌"},
+        {"target": 11, "type": "兄弟", "description": "与姬发"}
+      ]
+    },
+    {
+      "id": 13,
+      "name": "杨戬",
+      "role": "玉虚宫弟子",
+      "relationships": [
+        {"target": 15, "type": "师徒", "description": "与姜子牙"},
+        {"target": 14, "type": "同门", "description": "与哪吒"}
+      ]
+    },
+    {
+      "id": 14,
+      "name": "哪吒",
+      "role": "玉虚宫弟子",
+      "relationships": [
+        {"target": 15, "type": "师徒", "description": "与姜子牙"},
+        {"target": 13, "type": "同门", "description": "与杨戬"}
+      ]
+    },
+    {
+      "id": 15,
+      "name": "姜子牙",
+      "role": "封神榜执掌者",
+      "alias": ["太公望"],
+      "relationships": [
+        {"target": 13, "type": "师徒", "description": "与杨戬"},
+        {"target": 14, "type": "师徒", "description": "与哪吒"},
+        {"target": 16, "type": "同门", "description": "与申公豹"},
+        {"target": 11, "type": "君臣", "description": "与姬发"}
+      ]
+    },
+    {
+      "id": 16,
+      "name": "申公豹",
+      "role": "截教弟子",
+      "relationships": [
+        {"target": 15, "type": "敌对", "description": "与姜子牙"},
+        {"target": 1, "type": "君臣", "description": "与殷寿"}
+      ]
+    },
+    {
+      "id": 17,
+      "name": "比干",
+      "role": "商朝亚相",
+      "relationships": [
+        {"target": 1, "type": "叔侄", "description": "与殷寿"}
+      ]
+    },
+    {
+      "id": 18,
+      "name": "苏妲己",
+      "role": "狐妖",
+      "alias": ["狐妖妲己"],
+      "relationships": [
+        {"target": 1, "type": "夫妻", "description": "与殷寿"},
+        {"target": 19, "type": "兄妹", "description": "与苏全孝"},
+        {"target": 20, "type": "父女", "description": "与苏护"}
+      ]
+    },
+    {
+      "id": 19,
+      "name": "苏全孝",
+      "role": "冀州侯之子/质子",
+      "relationships": [
+        {"target": 1, "type": "质子", "description": "殷寿的质子"},
+        {"target": 18, "type": "兄妹", "description": "与苏妲己"},
+        {"target": 20, "type": "父子", "description": "与苏护"}
+      ]
+    },
+    {
+      "id": 20,
+      "name": "苏护",
+      "role": "冀州侯",
+      "relationships": [
+        {"target": 18, "type": "父女", "description": "与苏妲己"},
+        {"target": 19, "type": "父子", "description": "与苏全孝"}
+      ]
+    }
+  ],
+  "family_trees": {
+    "商王室": {
+      "members": ["殷寿", "殷郊", "姜王后", "比干"],
+      "relationships": [
+        "殷寿 ↔ 姜王后 (夫妻)",
+        "殷寿 & 姜王后 → 殷郊 (子女)",
+        "比干 — 殷寿 (叔侄)"
+      ]
+    },
+    "质子关系": {
+      "members": ["殷寿", "崇应彪", "鄂顺", "姜文焕", "姬发", "苏全孝"],
+      "relationships": [
+        "殷寿 → 崇应彪 (质子)",
+        "殷寿 → 鄂顺 (质子)",
+        "殷寿 → 姜文焕 (质子)",
+        "殷寿 → 姬发 (质子)",
+        "殷寿 → 苏全孝 (质子)"
+      ]
+    },
+    "东伯侯家族": {
+      "members": ["姜桓楚", "姜王后", "姜文焕"],
+      "relationships": [
+        "姜桓楚 ↔ 姜王后 (兄妹)",
+        "姜桓楚 → 姜文焕 (父子)"
+      ]
+    },
+    "南伯侯家族": {
+      "members": ["鄂崇禹", "鄂顺"],
+      "relationships": [
+        "鄂崇禹 → 鄂顺 (父子)"
+      ]
+    },
+    "北伯侯家族": {
+      "members": ["崇侯虎", "崇应彪"],
+      "relationships": [
+        "崇侯虎 → 崇应彪 (父子)"
+      ]
+    },
+    "西伯侯家族": {
+      "members": ["姬昌", "伯邑考", "姬发"],
+      "relationships": [
+        "姬昌 → 伯邑考 (父子)",
+        "姬昌 → 姬发 (父子)",
+        "伯邑考 — 姬发 (兄弟)"
+      ]
+    },
+    "苏护家族": {
+      "members": ["苏护", "苏妲己", "苏全孝"],
+      "relationships": [
+        "苏护 → 苏妲己 (父女)",
+        "苏护 → 苏全孝 (父子)",
+        "苏妲己 — 苏全孝 (兄妹)"
+      ]
+    },
+    "备注": "根据电影设定，五大诸侯之子（崇应彪、鄂顺、姜文焕、姬发、苏全孝）均为商王殷寿的质子"
+  }
+}

@@ -1,0 +1,938 @@
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>《封神第一部》人物关系图</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Source+Han+Serif+SC:wght@700&display=swap" rel="stylesheet">
+    <style>
+    body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans SC', sans-serif;
+    background: #f5f1e6;
+    overflow: hidden;
+    }
+    #graph {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    background-image: url('fengshen-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(0, 0, 0, 0.15);
+    background-blend-mode: multiply;
+    padding-left: 0px;
+    padding-right: 20px;
+    }
+        
+    .title {
+    position: fixed;
+    top: 25px;
+    left: 25px; 
+    z-index: 1001; 
+    text-align: left; 
+    padding: 12px 0; 
+    font-family: 'Source Han Serif SC', serif;
+    color: #8B4513;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    background-color: rgba(255, 253, 245, 0.7);
+    border-radius: 10px;
+    border: 2px solid #D4AF37;
+    width: 400px; 
+    font-size: 30px; 
+    padding: 12px 15px; 
+    white-space: nowrap; 
+    }
+    .signature {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    z-index: 1002;
+    background: rgba(245, 241, 230, 0.95);
+    border: 2px solid #D4AF37;
+    border-radius: 10px;
+    padding: 12px 15px;
+    width: 600px;
+    box-shadow: 0 3px 20px rgba(0,0,0,0.3);
+    text-align: right;
+}
+
+    .signature-line {
+    line-height: 2.0;
+    }
+
+    .signature-line1 { 
+    font-size: 30px;
+    color: #8B4513;
+    font-family: 'Source Han Serif SC', serif;
+    letter-spacing: 2px;
+    } 
+
+    .signature-line2 { 
+    font-size: 30px;
+    color: #B8860B;
+    font-family: 'Source Han Serif SC', serif;
+    text-shadow: 1px 1px 2px rgba(139, 69, 19, 0.2);
+    white-space: nowrap;
+    } 
+
+    .signature-line3 { 
+    font-size: 35px;
+    color: #556B2F;
+    font-family: 'Source Han Serif SC', serif;
+    white-space: nowrap;
+    } 
+
+    .signature-line4 { 
+    font-size: 35px;
+    color: #556B2F;
+    font-family: 'Source Han Serif SC', serif;
+    font-style: italic;
+    }
+        .node-image {
+        clip-path: circle(50%);
+        box-shadow: 0 5px 20px rgba(139, 69, 19, 0.6);
+        transition: all 0.3s ease;
+        background-color: #f5f1e6;
+        width: 150px;  
+        height: 180px; 
+        x: 20;       
+        y: -60;      
+        border-width: 6px solid #D4AF37;
+
+    }
+    
+        .node-image:hover {
+        transform: scale(1.15);
+        box-shadow: 0 8px 25px rgba(139, 69, 19, 0.8);
+    }
+
+        .node text {
+        font-size: 50px;
+        font-weight: bold;
+        text-anchor: middle;
+        fill: #5c3317;
+        text-shadow: 0 2px 4px white;
+        font-family: 'Source Han Serif SC', serif;  
+        text-anchor: end; 
+        dominant-baseline: central; 
+        pointer-events: none;
+
+    }
+
+        .link {
+        stroke-opacity: 0.8;
+        stroke-width: 6;
+        transition: all 0.3s;
+    }
+        .link:hover {
+        stroke-opacity: 1;
+        stroke-width: 4;
+    }
+
+        .link-text {
+        font-size: 100px;
+        font-weight: bold;
+        fill: #654321;
+        text-shadow: 0 0 4px white;
+        pointer-events: none;
+        font-family: 'Source Han Serif SC', serif;
+        transition: all 0.3s;
+        paint-order: stroke;
+        stroke: white;
+        stroke-width: 2px;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+        .tooltip {
+        position: absolute;
+        padding: 25px;
+        background: rgba(255, 253, 245, 0.98);
+        border-radius: 12px;
+        box-shadow: 0 6px 30px rgba(0,0,0,0.5);
+        pointer-events: none;
+        font-family: 'Noto Sans SC', sans-serif;
+        max-width: 400px; 
+        border: 3px solid #D4AF37; 
+        color: #5c3317;
+        line-height: 1.8; 
+        font-size: 16px; 
+        transition: all 0.2s ease-out; 
+    }
+
+        .tooltip h3 {
+        margin: 0 0 15px 0; 
+        font-size: 22px; 
+        border-bottom: 2px solid #D4AF37; 
+        padding-bottom: 12px;
+    }
+
+    /* 新增详细信息样式 */
+        .tooltip-detail {
+        margin: 10px 0;
+        padding: 12px;
+        background: rgba(245, 241, 230, 0.3);
+        border-radius: 8px;
+    }
+
+        .legend {
+        position: absolute;
+        bottom: 25px;
+        right: 35px;
+        background: rgba(245, 241, 230, 0.95);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 3px 20px rgba(0,0,0,0.3);
+        font-size: 20px;
+        border: 2px solid #D4AF37;
+        max-width: 350px;
+    }
+
+        .legend h3 {
+        margin: 0 0 12px 0;
+        margin-bottom: 16px; 
+        color: #8B4513;
+        text-align: center;
+        font-family: 'Source Han Serif SC', serif;
+        font-size: 20px;
+    }
+
+        .legend-item {
+        display: flex;
+        align-items: center;
+        margin: 14px 0;
+    }
+
+        .legend-color {
+        width: 24px;
+        height: 24px;
+        margin-right: 15px;
+        border-radius: 4px;
+        border: 1px solid #5c3317;
+    }
+
+        .family-tree {
+        position: absolute;
+        top: 90px; 
+        left: 25px; 
+        background: rgba(245, 241, 230, 0.95);
+        padding: 18px;
+        border-radius: 10px;
+        box-shadow: 0 3px 20px rgba(0,0,0,0.3);
+        font-size: 24px;
+        border: 2px solid #D4AF37;
+        width: 850px;       
+        max-width: none;  
+        overflow-y: auto;
+    }
+
+        .family-tree h3 {
+        margin: 0 0 12px 0;
+        color: #8B4513;
+        text-align: center;
+        font-family: 'Source Han Serif SC', serif;
+        font-size: 24px;
+    }
+        .family-tree-item {
+        margin: 8px 0;
+        padding: 8px;
+        border-bottom: 1px dashed #D4AF37;
+    }
+        .family-tree-item:last-child {
+        border-bottom: none;
+    }
+        .zoom-container {
+        transform-origin: 0 0;
+        will-change: transform;
+    }
+        .node-image, .link, .link-text {
+        vector-effect: non-scaling-stroke;
+    }
+        #graph > svg {
+        position: relative;
+        z-index: 1;
+    }
+        .title, .family-tree, .legend {
+        z-index: 1000;
+        pointer-events: none; 
+    }
+        .family-tree *, .legend * {
+        pointer-events: auto;
+    }
+        .node-image {
+        transform-box: fill-box; 
+    }
+        .link-text {
+        stroke-width: 3px; 
+        vector-effect: non-scaling-stroke; 
+    }
+        .node text {
+        text-shadow: 0 3px 6px white;
+    }
+        .data-source {
+        position: fixed;
+        bottom: 25px;
+        left: 25px;
+        width: 850px; 
+        max-width: none; 
+        background: rgba(245, 241, 230, 0.95);
+        padding: 18px; 
+        border-radius: 10px;
+        border: 2px solid #D4AF37;
+        box-shadow: 0 3px 20px rgba(0,0,0,0.3);
+        font-family: 'Source Han Serif SC', serif;
+        font-size: 25px;
+        color: #5c3317;
+        text-align: left; 
+        z-index: 1000;
+        line-height: 1.6;
+    }
+
+        .data-source a {
+        color: #8B4513;
+        text-decoration: none;
+        border-bottom: 1px dashed #D4AF37;
+        transition: all 0.3s;
+}
+
+        .data-source a:hover {
+        color: #B8860B;
+        border-bottom-style: solid;
+}
+        .legend {
+        bottom: 25px; 
+}
+    </style>
+</head>
+<body>
+    <body>
+        <div class="signature">
+            <div class="signature-line signature-line1">课程作业</div>
+            <div class="signature-line signature-line2">22计传陈识宇</div>
+            <div class="signature-line signature-line3">《封神第一部》人物关系图</div>
+            <div class="signature-line signature-line4">Creation of The Gods Ⅰ:Kingdom of Storms</div>
+        </div>
+        <div id="graph">
+            <div class="title">《封神第一部》人物关系图</div>
+        </div>
+
+        <div class="data-source">
+            <p>数据来源：<a href="https://baike.baidu.com/item/封神第一部：朝歌风云/62955514" target="_blank">《封神第一部》百度百科</a>，色彩风格模仿商周时期的青铜器，背景纹饰是祥云纹。2023年，《封神第一部：朝歌风云》获得第36届中国电影金鸡奖·最佳故事片、最佳摄影等奖项。</p>
+        </div>
+    </div>
+
+    <script>
+        // 商周风格配色方案
+        const colorMap = {
+            "父子": "#8B4513",       // 棕色
+            "质子": "#8B008B",       // 深紫色
+            "夫妻": "#D2691E",       // 巧克力色
+            "母子": "#A0522D",       // 赭色
+            "兄妹": "#CD853F",       // 秘鲁色
+            "君臣": "#B8860B",       // 暗金色
+            "师徒": "#556B2F",       // 暗橄榄绿
+            "同门": "#6B8E23",       // 橄榄色
+            "敌对": "#800000",       // 栗色
+            "叔侄": "#DAA520",       // 金色
+            "兄弟": "#A67C52",       // 青铜色
+            "父女": "#8B7355",       // 黄铜色
+            "默认": "#708090"        // 石板灰
+        };
+
+        // 人物图片映射
+        const imageMap = {
+            "殷寿": "images/yinshou.jpg",
+            "殷郊": "images/yinjiao.jpg",
+            "姜王后": "images/jiangwanghou.jpg",
+            "姜桓楚": "images/jianghuanchu.jpg",
+            "姜文焕": "images/jiangwenhuan.jpg",
+            "鄂顺": "images/eshun.jpg",
+            "鄂崇禹": "images/echongyu.jpg",
+            "崇侯虎": "images/chonghouhu.jpg",
+            "崇应彪": "images/chongyingbiao.jpg",
+            "姬昌": "images/jichang.jpg",
+            "姬发": "images/jifa.jpg",
+            "伯邑考": "images/boyikao.jpg",
+            "杨戬": "images/yangjian.jpg",
+            "哪吒": "images/nezha.jpg",
+            "姜子牙": "images/jiangziya.jpg",
+            "申公豹": "images/shengongbao.jpg",
+            "比干": "images/bigan.jpg",
+            "苏妲己": "images/sudaji.jpg",
+            "苏全孝": "images/suquanxiao.jpg",
+            "苏护": "images/suhu.jpg"
+        };
+
+        // 内联JSON数据
+        const data = {
+            "characters": [
+                {
+                    "id": 1,
+                    "name": "殷寿",
+                    "role": "商纣王",
+                    "alias": ["纣王"],
+                    "relationships": [
+                        {"target": 2, "type": "父子", "description": "与殷郊"},
+                        {"target": 3, "type": "夫妻", "description": "与姜王后"},
+                        {"target": 9, "type": "质子", "description": "崇应彪为其质子"},
+                        {"target": 6, "type": "质子", "description": "鄂顺为其质子"},
+                        {"target": 5, "type": "质子", "description": "姜文焕为其质子"},
+                        {"target": 11, "type": "质子", "description": "姬发为其质子"},
+                        {"target": 19, "type": "质子", "description": "苏全孝为其质子"},
+                        {"target": 16, "type": "君臣", "description": "与比干"},
+                        {"target": 18, "type": "夫妻", "description": "与苏妲己"}
+                    ]
+                },
+                {
+                    "id": 2,
+                    "name": "殷郊",
+                    "role": "商太子",
+                    "relationships": [
+                        {"target": 1, "type": "父子", "description": "与殷寿"},
+                        {"target": 3, "type": "母子", "description": "与姜王后"}
+                    ]
+                },
+                {
+                    "id": 3,
+                    "name": "姜王后",
+                    "role": "商王后",
+                    "relationships": [
+                        {"target": 1, "type": "夫妻", "description": "与殷寿"},
+                        {"target": 2, "type": "母子", "description": "与殷郊"},
+                        {"target": 4, "type": "兄妹", "description": "与姜桓楚"}
+                    ]
+                },
+                {
+                    "id": 4,
+                    "name": "姜桓楚",
+                    "role": "东伯侯",
+                    "relationships": [
+                        {"target": 3, "type": "兄妹", "description": "与姜王后"},
+                        {"target": 5, "type": "父子", "description": "与姜文焕"}
+                    ]
+                },
+                {
+                    "id": 5,
+                    "name": "姜文焕",
+                    "role": "东伯侯之子/质子",
+                    "relationships": [
+                        {"target": 1, "type": "质子", "description": "殷寿的质子"},
+                        {"target": 4, "type": "父子", "description": "与姜桓楚"}
+                    ]
+                },
+                {
+                    "id": 6,
+                    "name": "鄂顺",
+                    "role": "南伯侯之子/质子",
+                    "relationships": [
+                        {"target": 1, "type": "质子", "description": "殷寿的质子"},
+                        {"target": 7, "type": "父子", "description": "与鄂崇禹"}
+                    ]
+                },
+                {
+                    "id": 7,
+                    "name": "鄂崇禹",
+                    "role": "南伯侯",
+                    "relationships": [
+                        {"target": 6, "type": "父子", "description": "与鄂顺"}
+                    ]
+                },
+                {
+                    "id": 8,
+                    "name": "崇侯虎",
+                    "role": "北伯侯",
+                    "relationships": [
+                        {"target": 9, "type": "父子", "description": "与崇应彪"}
+                    ]
+                },
+                {
+                    "id": 9,
+                    "name": "崇应彪",
+                    "role": "北伯侯之子/质子",
+                    "relationships": [
+                        {"target": 1, "type": "质子", "description": "殷寿的质子"},
+                        {"target": 8, "type": "父子", "description": "与崇侯虎"}
+                    ]
+                },
+                {
+                    "id": 10,
+                    "name": "姬昌",
+                    "role": "西伯侯",
+                    "relationships": [
+                        {"target": 11, "type": "父子", "description": "与姬发"},
+                        {"target": 12, "type": "父子", "description": "与伯邑考"}
+                    ]
+                },
+                {
+                    "id": 11,
+                    "name": "姬发",
+                    "role": "周武王/质子",
+                    "alias": ["周武王"],
+                    "relationships": [
+                        {"target": 1, "type": "质子", "description": "殷寿的质子"},
+                        {"target": 10, "type": "父子", "description": "与姬昌"},
+                        {"target": 12, "type": "兄弟", "description": "与伯邑考"},
+                        {"target": 15, "type": "君臣", "description": "与姜子牙"}
+                    ]
+                },
+                {
+                    "id": 12,
+                    "name": "伯邑考",
+                    "role": "西伯侯长子",
+                    "relationships": [
+                        {"target": 10, "type": "父子", "description": "与姬昌"},
+                        {"target": 11, "type": "兄弟", "description": "与姬发"}
+                    ]
+                },
+                {
+                    "id": 13,
+                    "name": "杨戬",
+                    "role": "玉虚宫弟子",
+                    "relationships": [
+                        {"target": 15, "type": "师徒", "description": "与姜子牙"},
+                        {"target": 14, "type": "同门", "description": "与哪吒"}
+                    ]
+                },
+                {
+                    "id": 14,
+                    "name": "哪吒",
+                    "role": "玉虚宫弟子",
+                    "relationships": [
+                        {"target": 15, "type": "师徒", "description": "与姜子牙"},
+                        {"target": 13, "type": "同门", "description": "与杨戬"}
+                    ]
+                },
+                {
+                    "id": 15,
+                    "name": "姜子牙",
+                    "role": "封神榜执掌者",
+                    "alias": ["太公望"],
+                    "relationships": [
+                        {"target": 13, "type": "师徒", "description": "与杨戬"},
+                        {"target": 14, "type": "师徒", "description": "与哪吒"},
+                        {"target": 16, "type": "同门", "description": "与申公豹"},
+                        {"target": 11, "type": "君臣", "description": "与姬发"}
+                    ]
+                },
+                {
+                    "id": 16,
+                    "name": "申公豹",
+                    "role": "截教弟子",
+                    "relationships": [
+                        {"target": 15, "type": "敌对", "description": "与姜子牙"},
+                        {"target": 1, "type": "君臣", "description": "与殷寿"}
+                    ]
+                },
+                {
+                    "id": 17,
+                    "name": "比干",
+                    "role": "商朝亚相",
+                    "relationships": [
+                        {"target": 1, "type": "叔侄", "description": "与殷寿"}
+                    ]
+                },
+                {
+                    "id": 18,
+                    "name": "苏妲己",
+                    "role": "狐妖",
+                    "alias": ["狐妖妲己"],
+                    "relationships": [
+                        {"target": 1, "type": "夫妻", "description": "与殷寿"},
+                        {"target": 19, "type": "兄妹", "description": "与苏全孝"},
+                        {"target": 20, "type": "父女", "description": "与苏护"}
+                    ]
+                },
+                {
+                    "id": 19,
+                    "name": "苏全孝",
+                    "role": "冀州侯之子/质子",
+                    "relationships": [
+                        {"target": 1, "type": "质子", "description": "殷寿的质子"},
+                        {"target": 18, "type": "兄妹", "description": "与苏妲己"},
+                        {"target": 20, "type": "父子", "description": "与苏护"}
+                    ]
+                },
+                {
+                    "id": 20,
+                    "name": "苏护",
+                    "role": "冀州侯",
+                    "relationships": [
+                        {"target": 18, "type": "父女", "description": "与苏妲己"},
+                        {"target": 19, "type": "父子", "description": "与苏全孝"}
+                    ]
+                }
+            ],
+            "family_trees": {
+                "商王室": {
+                    "members": ["殷寿", "殷郊", "姜王后", "比干"],
+                    "relationships": [
+                        "殷寿 ↔ 姜王后 (夫妻)",
+                        "殷寿 & 姜王后 → 殷郊 (子女)",
+                        "比干 — 殷寿 (叔侄)"
+                    ]
+                },
+                "质子关系": {
+                    "members": ["殷寿", "崇应彪", "鄂顺", "姜文焕", "姬发", "苏全孝"],
+                    "relationships": [
+                        "殷寿 → 崇应彪 (质子)",
+                        "殷寿 → 鄂顺 (质子)",
+                        "殷寿 → 姜文焕 (质子)",
+                        "殷寿 → 姬发 (质子)",
+                        "殷寿 → 苏全孝 (质子)"
+                    ]
+                },
+                "东伯侯家族": {
+                    "members": ["姜桓楚", "姜王后", "姜文焕"],
+                    "relationships": [
+                        "姜桓楚 ↔ 姜王后 (兄妹)",
+                        "姜桓楚 → 姜文焕 (父子)"
+                    ]
+                },
+                "南伯侯家族": {
+                    "members": ["鄂崇禹", "鄂顺"],
+                    "relationships": [
+                        "鄂崇禹 → 鄂顺 (父子)"
+                    ]
+                },
+                "北伯侯家族": {
+                    "members": ["崇侯虎", "崇应彪"],
+                    "relationships": [
+                        "崇侯虎 → 崇应彪 (父子)"
+                    ]
+                },
+                "西伯侯家族": {
+                    "members": ["姬昌", "伯邑考", "姬发"],
+                    "relationships": [
+                        "姬昌 → 伯邑考 (父子)",
+                        "姬昌 → 姬发 (父子)",
+                        "伯邑考 — 姬发 (兄弟)"
+                    ]
+                },
+                "苏护家族": {
+                    "members": ["苏护", "苏妲己", "苏全孝"],
+                    "relationships": [
+                        "苏护 → 苏妲己 (父女)",
+                        "苏护 → 苏全孝 (父子)",
+                        "苏妲己 — 苏全孝 (兄妹)"
+                    ]
+                },
+                "备注": "根据电影设定，五大诸侯之子（崇应彪、鄂顺、姜文焕、姬发、苏全孝）均为商王殷寿的质子"
+            }
+        };
+
+        // 创建SVG画布
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const svg = d3.select("#graph").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // 创建缩放容器
+        const chart = svg.append("g")
+            .attr("class", "zoom-container");
+
+        // 处理节点数据
+        const nodes = data.characters.map(d => ({
+    ...d,
+        x: width * 0.05 + Math.random() * width * 0.9, // 更分散
+        y: height * 0.05 + Math.random() * height * 0.9
+        }));
+
+        // 处理链接数据（修正为对象引用）
+        const links = [];
+        const nodeMap = new Map(nodes.map(n => [n.id, n]));
+        const linkKeys = new Set(); // 用于存储已存在的链接唯一标识
+
+        nodes.forEach(node => {
+        node.relationships?.forEach(rel => {
+        const targetNode = nodeMap.get(rel.target);
+        if (targetNode) {
+            // 创建双向唯一标识（解决A→B和B→A的问题）
+            const sortedIds = [node.id, targetNode.id].sort().join('-');
+            const linkKey = `${sortedIds}-${rel.type}`;
+            
+            if (!linkKeys.has(linkKey)) {
+                linkKeys.add(linkKey);
+                
+                links.push({
+                    source: node,
+                    target: targetNode,
+                    type: rel.type,
+                    description: rel.description
+                });
+            }
+        }
+    });
+});
+
+
+        // 创建力导向图模拟
+        const simulation = d3.forceSimulation(nodes)
+        .force("collide", d3.forceCollide()
+        .radius(120)) // 原100
+        .force("link", d3.forceLink(links)
+        .distance(d => {
+            const base = Math.min(width, height) * 0.6; // 原0.5
+            const typeDistance = {
+                "质子": base * 1.8,  // 原1.5
+                "父子": base * 1.5,
+                "夫妻": base * 1.3,
+                "敌对": base * 2.5   
+            };
+            return typeDistance[d.type] || base;
+        }))
+        .force("charge", d3.forceManyBody()
+        .strength(d => -Math.pow(d.relationships?.length || 1, 2) * 150))// 增强排斥力
+        .force("center", d3.forceCenter(width/2, height/2))
+        .force("collide", d3.forceCollide()
+        .radius(150)) // 碰撞半径增大到80
+        .force("x", d3.forceX(width/2).strength(0.05)) // 降低中心引力
+        .force("y", d3.forceY(height/2).strength(0.05));
+       
+
+        // 创建链接
+        
+        const link = chart.selectAll(".link")
+            .data(links)
+            .enter().append("line")
+            .attr("class", "link")
+            .attr("stroke", d => colorMap[d.type] || colorMap.默认)
+            .attr("stroke-width", 3);
+        
+        const linkText = chart.selectAll(".link-text")
+        .data(links)
+        .enter().append("text")
+        .attr("class", "link-text")
+        .style("font-family", "Source Han Serif SC")
+        .style("font-size", "22px") // 同步放大字号
+        .style("pointer-events", "none")
+        .text(d => d.type);
+
+        // 创建节点
+        const node = chart.selectAll(".node")
+        .data(nodes)
+        .enter().append("g")
+        .attr("class", "node")
+        .call(d3.drag()
+        .on("start", dragStarted)
+        .on("drag", dragged)
+        .on("end", dragEnded));
+
+        const textGroup = node.append("text")
+        .attr("x", -80) /* 文字左侧偏移量 */
+        .attr("dy", "0.3em");
+
+        // 拆分字符为竖向排列
+        textGroup.selectAll("tspan")
+        .data(d => d.name.split(""))
+        .enter()
+        .append("tspan")
+        .attr("x", -80)
+        .attr("dy", (d, i) => i ? "1.2em" : 0)
+        .text(d => d);
+
+        // 添加节点图片
+        node.append("image")
+            .attr("class", "node-image")
+            .attr("xlink:href", d => imageMap[d.name] || "默认图片base64")
+            .attr("width", 120)
+            .attr("height", 120)
+            .attr("x", -60)
+            .attr("y", -60);
+
+        // 添加节点文字
+            simulation.on("tick", () => {
+            // 更新连线位置
+            link.attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            // 更新节点位置
+            node.attr("transform", d => `translate(${d.x},${d.y})`);
+
+            // 在tick事件中调整文字位置
+            linkText
+            .attr("x", d => (d.source.x + d.target.x)/2)
+            .attr("y", d => (d.source.y + d.target.y)/2)
+            .attr("transform", d => {
+            const angle = Math.atan2(d.target.y - d.source.y, d.target.x - d.source.x);
+            return `rotate(${angle * 180 / Math.PI}, 
+                        ${(d.source.x + d.target.x)/2}, 
+                        ${(d.source.y + d.target.y)/2})`;
+            })
+            .attr("dx", d => {
+            const angle = Math.atan2(d.target.y - d.source.y, d.target.x - d.source.x);
+            return Math.cos(angle) * 25; // 原16，增加偏移量
+            })
+            .attr("dy", d => {
+            const angle = Math.atan2(d.target.y - d.source.y, d.target.x - d.source.x);
+            return Math.sin(angle) * 25 + 8; // 原16+6
+            });
+        });
+
+        // 添加图片加载错误处理
+        node.select("image")
+            .on("error", function() {
+                d3.select(this)
+                    .attr("xlink:href", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo4MjRGRTg0QzA3NjgxMUUzQkZGNDhENEJFQjM2OTcyRiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo4MjRGRTg0RDA3NjgxMUUzQkZGNDhENEJFQjM2OTcyRiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjgyNEZFODRBMDc2ODExRTNCRkY0OEQ0QkVCMzY5NzJGIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjgyNEZFODRCMDc2ODExRTNCRkY0OEQ0QkVCMzY5NzJGIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Y7ZvUAAAA2FJREFUeNrsmD1oFEEUx2dSSLAK2FhYiaBYiIUiYhEwjY1iI4gWQbARxE4hxSGiVgoiFhaxE7GxEwvBQkQhH4iI+AEKioKNDTZqoYj3H7zDcTjf7M7uzXqXfPCH2Z03M+/9Z96bt5soiqJmllY0uTQcgP8OwIEDB7oOHz7cVSqV2gqFQqvjf8lkMvk4mUw+HR4eflZXAHp7e8/09fVdL5fLbS5gWZY1NjYWjYyMRNPT09Hc3Fw0Pz8fLSwsRAsLC9Hi4mK0tLQULS8vRysrK9Hq6mq0trYWra+vRxsbG9Hm5ma0tbUVbW9vRzs7O9Hu7m4UhmGdABw7dqxYLBYv+4ABenh4OHr+/Hk0MzMT/fz5M/r165cH8Pv3bw8A0L9+/fIAAPvnzx8PgNLe3t4+AOvr6wSgq6ur/dChQ5d9wAB9//49evXqVTQ7O+uBAxrQlAJOSQOeUgAopZRS4DMAYHp6ulQqla76gAH6zZs30atXr7wCAE5pAx4FqBQASgGglFJKKfAZAPD27duOzs7Oaz5ggF5cXIzevXvnFQBwShvwlAJAqQKglFJKKfAZAPDp06e2lpaW6z5ggP7y5Uv08eNHrwCAU9qAp1QBUFoBQCmllFLgMwDg69evlwYGBm74gAH6y5cv0efPn70CAE5pA55SACgFgFJKKaXAZwDAjx8/2s+cOXPTBwzQy8vL0dLSklcAwCltwFMKAKUKgFJKKaXAZwDA79+/W0+fPn3LBwzQKysr0erqqlcAwCltwFMKAKUKgFJKKaXAZwDAxsZG6+nTp2/7gAF6bW0tWl9f9woAOKUNeEoBoFQBUEoppRR4BwB+BRgAm+jbw0sILs0AAAAASUVORK5CYII=");
+            });
+
+        // 完善工具提示
+        const tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
+            node.on("mouseover", function(event, d) {
+        const [x, y] = [event.pageX + 30, event.pageY - 50]; // 调整初始位置
+    
+        tooltip.transition()
+        .duration(150)
+        .style("opacity", 0.98)
+        .style("transform", "scale(1.05)"); // 添加轻微缩放效果
+    
+        tooltip.html(`
+        <h3>${d.name}</h3>
+        <div class="tooltip-detail">
+            <div><strong>身份：</strong>${d.role}</div>
+            ${d.alias ? `<div><strong>别名：</strong>${d.alias.join("、")}</div>` : ""}
+        </div>
+        ${d.relationships?.length ? `
+        <div class="tooltip-detail">
+            <strong>重要关系：</strong>
+            ${d.relationships.slice(0,3).map(r => 
+                `• ${r.description}（${r.type}）`
+            ).join("<br>")}
+        </div>` : ""}
+        `)
+        .style("left", x + "px")
+        .style("top", y + "px");
+    })
+        .on("mouseout", function(d) {
+        tooltip.transition()
+        .duration(300)
+        .style("opacity", 0)
+        .style("transform", "scale(1)"); // 恢复原始尺寸
+    });
+        
+        // 拖动处理函数
+        function dragStarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragEnded(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+
+        const zoom = d3.zoom()
+        .scaleExtent([0.3, 5])
+        .wheelDelta(event => {
+        const sensitivity = 800;
+        return -event.deltaY * (event.deltaMode ? 120 : 1) / sensitivity;
+         })
+        .on('zoom', event => {
+
+        // 直接应用变换，无需过渡
+        chart.attr('transform', event.transform);
+        });
+
+        // 应用缩放并阻止默认行为（在创建svg后立即调用）
+        svg.call(zoom)
+       .call(zoom.transform, d3.zoomIdentity
+       .scale(1.5)); // 初始放大1.2倍
+
+        window.addEventListener('resize', () => {
+        const newWidth = window.innerWidth;
+        const newHeight = window.innerHeight;
+    
+        // 保持当前缩放状态
+        const currentTransform = d3.zoomTransform(svg.node());
+    
+        svg.attr("width", newWidth)
+       .attr("height", newHeight);
+    
+        // 重新计算中心点
+        const newX = currentTransform.x * (newWidth / width);
+        const newY = currentTransform.y * (newHeight / height);
+    
+        // 应用新变换
+        svg.call(zoom.transform, d3.zoomIdentity
+        .translate(newX, newY)
+        .scale(currentTransform.k));
+    
+        // 更新力导向中心点
+        simulation.force("center", d3.forceCenter(newWidth/2, newHeight/2))
+             .restart();
+});
+    </script>
+<style>
+</style>
+<script>
+    // 创建图例面板（右侧）
+    const legend = d3.select("body").append("div")
+        .attr("class", "legend")
+        .style("position", "fixed")
+        .style("right", "25px")
+        .style("bottom", "25px")
+        .html("<h3>关系类型图例</h3>");
+
+    // 填充图例内容
+    Object.entries(colorMap).forEach(([type, color]) => {
+        legend.append("div")
+            .attr("class", "legend-item")
+            .html(`
+                <div class="legend-color" style="background:${color}"></div>
+                <span>${type}</span>
+            `);
+    });
+
+    // 创建家族树面板（左侧）
+    const familyTree = d3.select("body").append("div")
+        .attr("class", "family-tree")
+        .style("position", "fixed")
+        .style("left", "25px")
+        .style("top", "100px")
+        .html("<h3>家族关系树</h3>");
+
+    // 填充家族树内容
+    Object.entries(data.family_trees).forEach(([familyName, familyData]) => {
+        if (familyName !== "备注") {
+            const familyDiv = familyTree.append("div")
+                .attr("class", "family-tree-item");
+
+            // 家族名称
+            familyDiv.append("div")
+                .style("font-weight", "bold")
+                .style("color", "#8B4513")
+                .style("margin-bottom", "8px")
+                .text(familyName);
+
+            // 家族成员
+            familyDiv.append("div")
+                .style("margin-bottom", "6px")
+                .html(`成员：${familyData.members.join("、")}`);
+
+            // 家族关系
+            familyDiv.append("div")
+                .selectAll("div")
+                .data(familyData.relationships)
+                .enter()
+                .append("div")
+                .style("padding", "4px 0")
+                .style("border-bottom", "1px dashed #D4AF37")
+                .text(d => d);
+        }
+    });
+
+</script>
+</body>
+</html>
